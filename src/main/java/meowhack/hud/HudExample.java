@@ -1,6 +1,6 @@
-package com.example.addon.hud;
+package meowhack.hud;
 
-import com.example.addon.AddonTemplate;
+import meowhack.AddonTemplate;
 import meteordevelopment.meteorclient.systems.hud.HudElement;
 import meteordevelopment.meteorclient.systems.hud.HudElementInfo;
 import meteordevelopment.meteorclient.systems.hud.HudRenderer;

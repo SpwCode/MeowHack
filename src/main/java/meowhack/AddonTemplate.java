@@ -1,9 +1,10 @@
-package com.example.addon;
+package meowhack;
 
-import com.example.addon.commands.CommandExample;
-import com.example.addon.hud.HudExample;
-import com.example.addon.modules.ModuleExample;
+import meowhack.commands.CommandExample;
+import meowhack.hud.HudExample;
+import meowhack.modules.ModuleExample;
 import com.mojang.logging.LogUtils;
+import meowhack.modules.VanillaNuker;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.commands.Commands;
@@ -15,7 +16,7 @@ import org.slf4j.Logger;
 
 public class AddonTemplate extends MeteorAddon {
     public static final Logger LOG = LogUtils.getLogger();
-    public static final Category CATEGORY = new Category("Example");
+    public static final Category CATEGORY = new Category("MeowHack");
     public static final HudGroup HUD_GROUP = new HudGroup("Example");
 
     @Override
@@ -24,6 +25,7 @@ public class AddonTemplate extends MeteorAddon {
 
         // Modules
         Modules.get().add(new ModuleExample());
+        Modules.get().add(new VanillaNuker());
 
         // Commands
         Commands.add(new CommandExample());
@@ -39,7 +41,7 @@ public class AddonTemplate extends MeteorAddon {
 
     @Override
     public String getPackage() {
-        return "com.example.addon";
+        return "meowhack";
     }
 
     @Override

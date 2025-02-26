@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "id": "addon-template",
   "version": "${version}",
-  "name": "Addon Template",
+  "name": "Meow Hack",
   "description": "An addon template for Meteor Client addons.",
   "authors": [
-    "seasnail"
+    "Spw"
   ],
   "contact": {
     "repo": "https://github.com/MeteorDevelopment/meteor-addon-template"
@@ -14,7 +14,7 @@
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.example.addon.AddonTemplate"
+      "meowhack.AddonTemplate"
     ]
   },
   "mixins": [

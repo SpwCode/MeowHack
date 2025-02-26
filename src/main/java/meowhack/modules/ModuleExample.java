@@ -1,6 +1,6 @@
-package com.example.addon.modules;
+package meowhack.modules;
 
-import com.example.addon.AddonTemplate;
+import meowhack.AddonTemplate;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.ColorSetting;
