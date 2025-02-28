@@ -3,6 +3,8 @@ package meowhack;
 import meowhack.commands.CommandExample;
 import meowhack.hud.HudExample;
 import com.mojang.logging.LogUtils;
+import meowhack.modules.AreaScan;
+import meowhack.modules.AutoBoost;
 import meowhack.modules.RocketRight;
 import meowhack.modules.VanillaNuker;
 import meteordevelopment.meteorclient.addons.GithubRepo;
@@ -24,8 +26,10 @@ public class AddonTemplate extends MeteorAddon {
         LOG.info("Initializing Meteor Addon Template");
 
         // Modules
+        Modules.get().add(new AreaScan());
         Modules.get().add(new RocketRight());
         Modules.get().add(new VanillaNuker());
+        Modules.get().add(new AutoBoost());
 
         // Commands
         Commands.add(new CommandExample());
