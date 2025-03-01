@@ -1,7 +1,7 @@
 package meowhack;
 
 import meowhack.commands.CommandExample;
-import meowhack.hud.HudExample;
+import meowhack.hud.HudExperience;
 import com.mojang.logging.LogUtils;
 import meowhack.modules.AreaScan;
 import meowhack.modules.AutoBoost;
@@ -35,7 +35,7 @@ public class AddonTemplate extends MeteorAddon {
         Commands.add(new CommandExample());
 
         // HUD
-        Hud.get().register(HudExample.INFO);
+        Hud.get().register(HudExperience.INFO);
     }
 
     @Override
