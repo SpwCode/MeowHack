@@ -1,12 +1,10 @@
 package meowhack;
 
-import meowhack.commands.CommandExample;
+import meowhack.commands.CalcCommand;
+import meowhack.commands.Destination;
 import meowhack.hud.HudExperience;
 import com.mojang.logging.LogUtils;
-import meowhack.modules.AreaScan;
-import meowhack.modules.AutoBoost;
-import meowhack.modules.RocketRight;
-import meowhack.modules.VanillaNuker;
+import meowhack.modules.*;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.commands.Commands;
@@ -30,9 +28,11 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new RocketRight());
         Modules.get().add(new VanillaNuker());
         Modules.get().add(new AutoBoost());
+        Modules.get().add(new AutoPilot());
 
         // Commands
-        Commands.add(new CommandExample());
+        Commands.add(new Destination());
+        Commands.add(new CalcCommand());
 
         // HUD
         Hud.get().register(HudExperience.INFO);
