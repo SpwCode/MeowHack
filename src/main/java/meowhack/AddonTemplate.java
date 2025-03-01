@@ -27,6 +27,7 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new AreaScan());
         Modules.get().add(new RocketRight());
         Modules.get().add(new VanillaNuker());
+        Modules.get().add(new VanillaFly());
         Modules.get().add(new AutoBoost());
         Modules.get().add(new AutoPilot());
 
