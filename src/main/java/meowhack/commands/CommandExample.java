@@ -25,7 +25,7 @@ public class CommandExample extends Command {
 
         builder.then(literal("name").then(argument("nameArgument", StringArgumentType.word()).executes(context -> {
             String argument = StringArgumentType.getString(context, "nameArgument");
-            info("hi, " + argument);
+            info(" " + argument);
             return SINGLE_SUCCESS;
         })));
     }
