@@ -21,7 +21,7 @@ public class Destination extends Command {
      * The {@code name} parameter should be in kebab-case.
      */
     public Destination() {
-        super("Destination", "Sends a message.");
+        super("destination", "Sends a message.");
     }
 
     @Override
