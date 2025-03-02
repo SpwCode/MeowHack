@@ -38,7 +38,7 @@ public class Destination extends Command {
                                 autoPilot.toggle();
                             }
                             if (PlayerUtils.getDimension() == Dimension.Nether) {
-                                ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goal " + BaritoneUtils.getPrefix() + " ~ " + ((Integer)context.getArgument("X", Integer.class)).toString());
+                                ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goal " + BaritoneUtils.getPrefix() + ((Integer)context.getArgument("X", Integer.class)).toString() + " ~ " + ((Integer)context.getArgument("Z", Integer.class)).toString());
                                 ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "elytra");
                             }
                             return SINGLE_SUCCESS;

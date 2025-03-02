@@ -30,6 +30,7 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new VanillaFly());
         Modules.get().add(new AutoBoost());
         Modules.get().add(new AutoPilot());
+        Modules.get().add(new MoveHelper());
 
         // Commands
         Commands.add(new Destination());

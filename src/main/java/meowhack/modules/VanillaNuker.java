@@ -12,7 +12,6 @@ import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -80,20 +79,21 @@ public class VanillaNuker extends Module {
         .build()
     );
 
-    private final Setting<Boolean> antiGhostBlock = sgGeneral.add(new BoolSetting.Builder()
-        .name("antiGhostBlock")
-        .description("Send 1 additional packet to prevent ghost blocks")
+    private final Setting<Boolean> blocksBelow = sgGeneral.add(new BoolSetting.Builder()
+        .name("blocks-below")
+        .description("Prevents mining blocks below certain height.")
         .defaultValue(false)
         .build()
     );
-
-    private final Setting<Boolean> swingHand = sgGeneral.add(new BoolSetting.Builder()
-        .name("swing-hand")
-        .description("Swing hand client side.")
-        .defaultValue(true)
+    public final Setting<Integer> blocksHeight = sgGeneral.add(new IntSetting.Builder()
+        .name("max-blocks-height")
+        .description("Dont mine blocks below this height.")
+        .defaultValue(14)
+        .range(-64, 319)
+        .sliderRange(-64, 319)
+        .visible(blocksBelow::get)
         .build()
     );
-
     // Whitelist
 
     private final Setting<Boolean> whitelistEnabled = sgWhitelist.add(new BoolSetting.Builder()
@@ -163,6 +163,7 @@ public class VanillaNuker extends Module {
 
         // Find blocks to break
         BlockIterator.register((int) Math.ceil(range.get()), (int) Math.ceil(range.get()), (blockPos, blockState) -> {
+            if (blocksBelow.get() && blockPos.getY() < blocksHeight.get()) return;
             if (!BlockUtils.canBreak(blockPos, blockState) || Utils.squaredDistance(pX, pY, pZ, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5) > rangeSq) return;
 
             if (mode.get() == Mode.Flatten && blockPos.getY() < Math.floor(mc.player.getY())) return;
@@ -210,15 +211,12 @@ public class VanillaNuker extends Module {
                 boolean canInstaMine = BlockUtils.canInstaBreak(block);
 
                 if (rotate.get()) Rotations.rotate(Rotations.getYaw(block), Rotations.getPitch(block));
-                if (antiGhostBlock.get())
-                    mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, block, Direction.UP));
 
                 if (mc.interactionManager.isBreakingBlock())
                     mc.interactionManager.updateBlockBreakingProgress(block, getDirection(block));
                 else
                     mc.interactionManager.attackBlock(block, getDirection(block));
 
-                //BlockUtils.breakBlock(block, swingHand.get());
                 lastBlockPos.set(block);
 
                 count++;
