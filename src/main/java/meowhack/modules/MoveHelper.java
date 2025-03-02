@@ -116,15 +116,21 @@ public class MoveHelper extends Module {
         // Список для хранения блоков, отсортированных по расстоянию до игрока
         List<BlockPos> sortedBlocks = new ArrayList<>();
 
-        BlockIterator.register(searchRadiusX.get(), searchRadiusY.get(), (pos, blockState) -> {
-            //BlockState required = worldSchematic.getBlockState(pos);
-                if (
-                    whitelistenabled.get()
-                    && whitelist.get().contains(blockState.getBlock())
-                    && (!isLavaNearby(pos))
-                    && (!blockState.isAir()))
-            {
-                sortedBlocks.add(new BlockPos(pos));
+        int chunkX = mc.player.getBlockX() >> 4; // Текущий X-координата чанка
+        int chunkZ = mc.player.getBlockZ() >> 4; // Текущий Z-координата чанка
+
+// Определяем границы текущего чанка (16x16 блоков)
+        int startX = chunkX << 4;
+        int endX = startX + 15;
+        int startZ = chunkZ << 4;
+        int endZ = startZ + 15;
+
+// Ограничиваем поиск в границах текущего чанка
+        BlockIterator.register(16, searchRadiusY.get(), (pos, blockState) -> {
+            if (pos.getX() >= startX && pos.getX() <= endX && pos.getZ() >= startZ && pos.getZ() <= endZ) {
+                if (whitelistenabled.get() && whitelist.get().contains(blockState.getBlock()) && !isLavaNearby(pos) && !blockState.isAir()) {
+                    sortedBlocks.add(new BlockPos(pos));
+                }
             }
         });
 
