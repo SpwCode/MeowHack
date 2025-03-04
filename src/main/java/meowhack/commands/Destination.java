@@ -40,6 +40,7 @@ public class Destination extends Command {
                             if (PlayerUtils.getDimension() == Dimension.Nether) {
                                 ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goal " + BaritoneUtils.getPrefix() + ((Integer)context.getArgument("X", Integer.class)).toString() + " ~ " + ((Integer)context.getArgument("Z", Integer.class)).toString());
                                 ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "elytra");
+                                // BaritoneAPI.getProvider().getPrimaryBaritone().getElytraProcess().pathTo(getBaritoneGoalXZ(x, z));
                             }
                             return SINGLE_SUCCESS;
         }))));
