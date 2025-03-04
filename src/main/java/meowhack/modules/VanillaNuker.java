@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FallingBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -78,6 +79,13 @@ public class VanillaNuker extends Module {
         .defaultValue(false)
         .build()
     );
+    private final Setting<Boolean> ignoreFallBlock = sgGeneral.add(new BoolSetting.Builder()
+        .name("ignore-fall-block")
+        .description("Prevents mining falling blocks.")
+        .defaultValue(false)
+        .build()
+    );
+
 
     private final Setting<Boolean> blocksBelow = sgGeneral.add(new BoolSetting.Builder()
         .name("blocks-below")
@@ -163,6 +171,8 @@ public class VanillaNuker extends Module {
 
         // Find blocks to break
         BlockIterator.register((int) Math.ceil(range.get()), (int) Math.ceil(range.get()), (blockPos, blockState) -> {
+            BlockPos abovePos = blockPos.up();
+            if (ignoreFallBlock.get() && (mc.world.getBlockState(abovePos).getBlock() instanceof FallingBlock)) return;
             if (blocksBelow.get() && blockPos.getY() < blocksHeight.get()) return;
             if (!BlockUtils.canBreak(blockPos, blockState) || Utils.squaredDistance(pX, pY, pZ, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5) > rangeSq) return;
 
