@@ -33,6 +33,7 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new MoveHelper());
         Modules.get().add(new AutoTrade());
         Modules.get().add(new AutoCraftReject());
+        Modules.get().add(new AutoCraftHelper());
 
         // Commands
         Commands.add(new Destination());
