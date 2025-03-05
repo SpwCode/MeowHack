@@ -51,7 +51,7 @@ public class AutoEnchBeta extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
-        .name("delay")
+        .name("operation-delay")
         .description("The amount of delay between interactions.")
         .defaultValue(20)
         .min(1)
@@ -229,17 +229,17 @@ public class AutoEnchBeta extends Module {
 
                 for (int i = 3; i < ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.size(); i++) {
                     ItemStack itemStack = ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(i).getStack();
-                    if (itemStack.getCustomName() != null) InvUtils.drop().slotId(i); // Выбрасываем предмет
-
-                    if (!itemStack.getItem().toString().equals(parts[1].trim().toLowerCase())) continue;
-
-                    if (itemStack.get(DataComponentTypes.REPAIR_COST) != null) {
-                        // У предмета есть штраф за починку
-                        InvUtils.drop().slotId(i);
+                    if (itemStack.getCustomName() != null) {
+                        InvUtils.drop().slotId(i); // Выбрасываем предмет
                         continue;
                     }
+
+                    if (!itemStack.getItem().toString().contains(parts[1].trim().toLowerCase())) {
+                        continue;
+                    }
+
                     ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(itemStack);
-                    if (enchantments.toString().contains(parts[2].trim().toLowerCase())) continue;
+                    if (!(enchantments.toString().toLowerCase().contains(parts[2].trim().toLowerCase()))) continue;
 
                     InvUtils.move().fromId(i).toId(slotNumber);
                     lineNumber++;
