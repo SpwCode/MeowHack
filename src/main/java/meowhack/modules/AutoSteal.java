@@ -134,20 +134,13 @@ public class AutoSteal extends Module {
         for (int i = 0; i <= 26; i++) { // перебираем только слоты до 27 включительно
             if (!mc.player.currentScreenHandler.getSlot(i).hasStack()) continue;
             Item item = ((ShulkerBoxScreenHandler) mc.player.currentScreenHandler).slots.get(i).getStack().getItem();
-
             if (mc.currentScreen == null) break;
-
             if (movedItems >= maxMovedItems.get()) {
                 movedItems = 0;
-               // error("Переменная сбросилась");
                 break; // выходим из цикла после перемещения 6 предметов
             }
-
-           // error(String.valueOf(movedItems));
-
             if (itemsForSteal.get().contains(item) && allowSteal) {
                 InvUtils.shiftClick().slotId(i);
-               // error("Переместили предмет +1");
                 itemsMoved = true; // устанавливаем флаг после перемещения предметов
                 movedItems++;
             }
