@@ -34,6 +34,7 @@ dependencies {
 
    // ItemScroller
     modImplementation ("com.github.sakura-ryoko:itemscroller:1.21.4-0.26.0")
+
 }
 
 tasks {
