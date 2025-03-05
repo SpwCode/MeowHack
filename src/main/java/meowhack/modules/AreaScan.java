@@ -47,7 +47,7 @@ public class AreaScan extends Module {
     );
 
     public AreaScan() {
-        super(AddonTemplate.CATEGORY, "AreaScan", "");
+        super(AddonTemplate.CATEGORY, "Area-Scan", "Spiral movement");
     }
 
     float yaw = 180;

@@ -30,7 +30,7 @@ public class RocketRight extends Module {
         .build()
     );
     public RocketRight() {
-        super(AddonTemplate.CATEGORY, "RocketRight", "Использовать рокеты из инвентаря или хотбара в полете, когда в руках меч или инструмент.");
+        super(AddonTemplate.CATEGORY, "Rocket-Right", "Использовать ракеты из инвентаря или хотбара в полете, когда в руках меч или инструмент.");
     }
 
     public void onActivate() {

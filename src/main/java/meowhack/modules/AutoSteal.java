@@ -35,7 +35,7 @@ import net.minecraft.util.math.Direction;
 public class AutoSteal extends Module {
 
     public AutoSteal() {
-        super(AddonTemplate.CATEGORY, "AutoSteal", "");
+        super(AddonTemplate.CATEGORY, "Auto-Steal", "Вор какашек");
     }
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

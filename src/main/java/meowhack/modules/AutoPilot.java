@@ -30,7 +30,7 @@ public class AutoPilot extends Module {
     );
 
     public AutoPilot() {
-        super(AddonTemplate.CATEGORY, "AutoPilot", "Cursed go brrrr..");
+        super(AddonTemplate.CATEGORY, "Auto-Pilot", "Cursed go brrrr..");
     }
 
     float yaw = 180;

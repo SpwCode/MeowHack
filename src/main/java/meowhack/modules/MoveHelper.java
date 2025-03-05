@@ -93,7 +93,7 @@ public class MoveHelper extends Module {
     private BlockPos lastNearestBlock = null; // Хранит последний ближайший блок
 
     public MoveHelper() {
-        super(AddonTemplate.CATEGORY, "MoveHelper", "Assists player movement.");
+        super(AddonTemplate.CATEGORY, "Move-Helper", "Assists player movement.");
     }
 
     boolean unpessed;

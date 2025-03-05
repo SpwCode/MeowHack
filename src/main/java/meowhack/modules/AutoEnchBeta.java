@@ -76,7 +76,7 @@ public class AutoEnchBeta extends Module {
 
 
     public AutoEnchBeta() {
-        super(AddonTemplate.CATEGORY, "AutoEnchBeta", "Automatically do stuff.");
+        super(AddonTemplate.CATEGORY, "Auto-Ench-Beta", "Automatically do stuff.");
 
         if (!file.exists()) {
             file = null;
@@ -204,6 +204,10 @@ public class AutoEnchBeta extends Module {
                     continue;
                 }
 
+                if (slotNumber == 0 || slotNumber == 1) {
+                    if (findAndMoveItem(parts[1], parts[2], slotNumber)) return;
+                }
+
                 if ((slotNumber == 2)) {
                     takeResults();
                     return;
@@ -226,30 +230,38 @@ public class AutoEnchBeta extends Module {
                         }
                     return;
                 }
-
-                for (int i = 3; i < ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.size(); i++) {
-                    ItemStack itemStack = ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(i).getStack();
-                    if (itemStack.getCustomName() != null) {
-                        InvUtils.drop().slotId(i); // Выбрасываем предмет
-                        continue;
-                    }
-
-                    if (!itemStack.getItem().toString().contains(parts[1].trim().toLowerCase())) {
-                        continue;
-                    }
-
-                    ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(itemStack);
-                    if (!(enchantments.toString().toLowerCase().contains(parts[2].trim().toLowerCase()))) continue;
-
-                    InvUtils.move().fromId(i).toId(slotNumber);
-                    lineNumber++;
-                    return;
-                }
             }
         }
             catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean findAndMoveItem(String itemName, String enchantmentName, int targetSlot) {
+        for (int i = 3; i < ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.size(); i++) {
+            ItemStack itemStack = ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(i).getStack();
+
+            // Если предмет переименован — выбрасываем его
+            if (itemStack.getCustomName() != null) {
+                InvUtils.drop().slotId(i);
+                continue;
+            }
+
+            // Проверяем, совпадает ли имя предмета
+            if (!itemStack.getItem().toString().contains(itemName.trim().toLowerCase())) {
+                continue;
+            }
+
+            // Проверяем наличие зачарования
+            ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(itemStack);
+            if (!(enchantments.toString().toLowerCase().contains(enchantmentName.trim().toLowerCase()))) continue;
+
+            // Если предмет подходит — перемещаем его в целевой слот
+            InvUtils.move().fromId(i).toId(targetSlot);
+            lineNumber++;
+            return true; // Нашли и переместили предмет
+        }
+        return false; // Не нашли подходящий предмет
     }
 
     private void takeResults() {
