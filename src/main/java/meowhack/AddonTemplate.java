@@ -25,16 +25,17 @@ public class AddonTemplate extends MeteorAddon {
 
         // Modules
         Modules.get().add(new AreaScan());
-        Modules.get().add(new RocketRight());
-        Modules.get().add(new VanillaNuker());
-        Modules.get().add(new VanillaFly());
         Modules.get().add(new AutoBoost());
-        Modules.get().add(new AutoPilot());
-        Modules.get().add(new MoveHelper());
-        Modules.get().add(new AutoTrade());
-        Modules.get().add(new AutoCraftReject());
         Modules.get().add(new AutoCraftHelper());
+        Modules.get().add(new AutoCraftReject());
         Modules.get().add(new AutoEnchBeta());
+        Modules.get().add(new AutoPilot());
+        Modules.get().add(new AutoSteal());
+        Modules.get().add(new AutoTrade());
+        Modules.get().add(new MoveHelper());
+        Modules.get().add(new RocketRight());
+        Modules.get().add(new VanillaFly());
+        Modules.get().add(new VanillaNuker());
 
         // Commands
         Commands.add(new Destination());

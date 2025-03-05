@@ -58,7 +58,6 @@ public class AutoTrade extends Module {
             if (((MerchantScreenHandler) handler1).getRecipes().isEmpty()) return;
 
             float multiplier = ((MerchantScreenHandler) handler1).getRecipes().get(0).getPriceMultiplier();
-            info("Множитель цены: " + multiplier);
             if (((MerchantScreenHandler) handler1).getRecipes().get(0).getDisplayedFirstBuyItem().getCount() <= maxPrice.get()) {
                     InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
                 }
