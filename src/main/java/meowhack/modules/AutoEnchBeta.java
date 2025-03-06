@@ -14,6 +14,7 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
+import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.component.DataComponentTypes;
@@ -214,8 +215,7 @@ public class AutoEnchBeta extends Module {
                 }
 
                 if ((slotNumber == 3)) {
-                        ItemStack itemStack = ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(0).getStack();
-                        if (itemStack.isEmpty()) {
+                        if (((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(0).getStack().isEmpty()) {
                             return;
                         }
                         mc.player.networkHandler.sendPacket(new RenameItemC2SPacket(parts[2].trim()));
@@ -224,9 +224,12 @@ public class AutoEnchBeta extends Module {
                 }
 
                 if (slotNumber == 9) {
-                    lineNumber = 1;
                         if (mc.player.currentScreenHandler instanceof AnvilScreenHandler) {
-                            mc.player.networkHandler.sendPacket(new RenameItemC2SPacket(""));
+                            InvUtils.drop().slotId(((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(2).getIndex());
+                            if (((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(2).getStack().isEmpty()) {
+                                mc.player.networkHandler.sendPacket(new RenameItemC2SPacket(""));
+                                lineNumber = 1;
+                            }
                         }
                     return;
                 }
@@ -241,11 +244,8 @@ public class AutoEnchBeta extends Module {
         for (int i = 3; i < ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.size(); i++) {
             ItemStack itemStack = ((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(i).getStack();
 
-            // Если предмет переименован — выбрасываем его
-            if (itemStack.getCustomName() != null) {
-                InvUtils.drop().slotId(i);
-                continue;
-            }
+            // Если предмет переименован — игнорируем его
+            if (itemStack.getCustomName() != null) continue;
 
             // Проверяем, совпадает ли имя предмета
             if (!itemStack.getItem().toString().contains(itemName.trim().toLowerCase())) {
@@ -266,9 +266,8 @@ public class AutoEnchBeta extends Module {
 
     private void takeResults() {
         AnvilScreenHandler anvilScreenHandler = (AnvilScreenHandler) mc.player.currentScreenHandler;
-        ItemStack resultStack = anvilScreenHandler.getSlot(2).getStack();
         InvUtils.shiftClick().slotId(2);
-        if (resultStack.isEmpty()) {
+        if (anvilScreenHandler.getSlot(2).getStack().isEmpty()) {
             lineNumber++;
         }
     }
