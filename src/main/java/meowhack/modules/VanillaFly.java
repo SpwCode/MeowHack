@@ -114,11 +114,6 @@ public class VanillaFly extends Module {
 
     @Override
     public void onActivate() {
-        if (mc.player.getY() < pitch40upperBounds.get()) {
-            error("Player must be above upper bounds!");
-            toggle();
-            return;
-        }
         if (freeLook.get() && !Modules.get().isActive(FreeLook.class)) Modules.get().get(FreeLook.class).toggle();
 
         pitch = pitchPlus.get();

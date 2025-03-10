@@ -3,6 +3,7 @@ package meowhack.modules;
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import meowhack.AddonTemplate;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
@@ -23,17 +24,16 @@ import net.minecraft.village.TradeOffer;
 public class AutoTrade extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
-    private final Setting<Integer> maxPrice = sgGeneral.add(new IntSetting.Builder()
-    .name("max-price")
-    .description("Maximum price to trade.")
-    .defaultValue(1)
-    .min(1)
-    .sliderMin(1).sliderMax(64)
-    .build()
+    private final Setting<Boolean> dontDemand = sgGeneral.add(new BoolSetting.Builder()
+        .name("don't-demand-bonus")
+        .description("Trade fair price")
+        .defaultValue(true)
+        .build()
     );
 
+
     public AutoTrade() {
-        super(AddonTemplate.CATEGORY, "Auto Trade Beta", "BetaTest");
+        super(AddonTemplate.CATEGORY, "Auto Trade", "This module use ItemScroller mod to trade with villagers automatically. ItemScroller required.");
     }
 
     @Override
@@ -47,7 +47,6 @@ public class AutoTrade extends Module {
 
         Entity target = mc.targetedEntity;
 
-        //    if (primary == null) return;
         if ((target instanceof VillagerEntity) && !((VillagerEntity) target).isBaby()) {
             mc.options.useKey.setPressed(false);
             mc.options.useKey.setPressed(true);
@@ -56,11 +55,14 @@ public class AutoTrade extends Module {
         if (mc.player.currentScreenHandler instanceof MerchantScreenHandler) {
             ScreenHandler handler1 = mc.player.currentScreenHandler;
             if (((MerchantScreenHandler) handler1).getRecipes().isEmpty()) return;
+            TradeOffer offer = ((MerchantScreenHandler) handler1).getRecipes().get(0);
+            int beenUsed = offer.getUses();
+            int maxUses = offer.getMaxUses();
 
-            float multiplier = ((MerchantScreenHandler) handler1).getRecipes().get(0).getPriceMultiplier();
-            if (((MerchantScreenHandler) handler1).getRecipes().get(0).getDisplayedFirstBuyItem().getCount() <= maxPrice.get()) {
-                    InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
-                }
+
+            if ((offer.getDemandBonus() == 0 && beenUsed < maxUses) || !dontDemand.get()) {
+                InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
+            }
             mc.setScreen(null);
         }
     }

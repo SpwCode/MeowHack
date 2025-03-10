@@ -174,12 +174,6 @@ public class AutoEnchBeta extends Module {
         if (file.length() == 0) {
             MutableText message = Text.literal("");
             message.append(Text.literal("The file is empty! ").formatted(Formatting.RED));
-            message.append(Text.literal("Click here to edit it.")
-                .setStyle(Style.EMPTY
-                        .withFormatting(Formatting.UNDERLINE, Formatting.RED)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()))
-                )
-            );
             toggle();
             return;
         }
