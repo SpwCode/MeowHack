@@ -36,6 +36,7 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new RocketRight());
         Modules.get().add(new VanillaFly());
         Modules.get().add(new VanillaNuker());
+        Modules.get().add(new AncientDebrisRenderer());
 
         // Commands
         Commands.add(new Destination());

@@ -222,10 +222,13 @@ public class VanillaNuker extends Module {
 
                 if (rotate.get()) Rotations.rotate(Rotations.getYaw(block), Rotations.getPitch(block));
 
-                if (mc.interactionManager.isBreakingBlock())
+                if (block == null) continue;
+
+                if (mc.interactionManager.isBreakingBlock()) {
                     mc.interactionManager.updateBlockBreakingProgress(block, getDirection(block));
-                else
+                } else {
                     mc.interactionManager.attackBlock(block, getDirection(block));
+                }
 
                 lastBlockPos.set(block);
 

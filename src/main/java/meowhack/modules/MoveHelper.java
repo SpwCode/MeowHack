@@ -30,8 +30,8 @@ import java.util.List;
 public class MoveHelper extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
-    private final Setting<Integer> barironeCooldown = sgGeneral.add(new IntSetting.Builder()
-        .name("barirone-cooldown")
+    private final Setting<Integer> baritoneCooldown = sgGeneral.add(new IntSetting.Builder()
+        .name("baritone-cooldown")
         .description("How many ticks wait before call baritone for help")
         .defaultValue(60)
         .min(10)
@@ -127,7 +127,7 @@ public class MoveHelper extends Module {
 
 
         positionCheckCounter++;
-        if (positionCheckCounter >= barironeCooldown.get()) { // 1200 тиков = примерно 1 минута
+        if (positionCheckCounter >= baritoneCooldown.get()) { // 1200 тиков = примерно 1 минута
             positionCheckCounter = 0;
             BlockPos currentPosition = mc.player.getBlockPos();
             if (lastPosition != null && currentPosition.equals(lastPosition)) {
