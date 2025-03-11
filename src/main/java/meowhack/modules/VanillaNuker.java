@@ -156,7 +156,7 @@ public class VanillaNuker extends Module {
     }
 
     @EventHandler
-    private void onTickPre(TickEvent.Pre event) {
+    private void onTick(TickEvent.Post event) {
         // Update timer
         if (timer > 0) {
             timer--;

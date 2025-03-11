@@ -124,22 +124,26 @@ public class MoveHelper extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre e) {
-
+        if (mc.player == null || mc.world == null) return;
 
         positionCheckCounter++;
         if (positionCheckCounter >= baritoneCooldown.get()) { // 1200 тиков = примерно 1 минута
             positionCheckCounter = 0;
             BlockPos currentPosition = mc.player.getBlockPos();
-            if (nearestBlock != null) {
-                if (nearestBlock.equals(lastNearestBlock)) {
-                    mc.player.setYaw(mc.player.getYaw() + 45);
+            if (lastPosition != null && currentPosition.equals(lastPosition)) {
+                if (nearestBlock != null) {
+                    if (nearestBlock.equals(lastNearestBlock)) {
+                        mc.player.setYaw(mc.player.getYaw() + 45);
+                    }
                 }
-                ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goto " + nearestBlock.getX() + " ~ " + nearestBlock.getZ());
-                lastNearestBlock = nearestBlock; // Обновляем последний найденный блок
+                    ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goto " + nearestBlock.getX() + " ~ " + nearestBlock.getZ());
+                    lastNearestBlock = nearestBlock;
+                    lastNearestBlock = nearestBlock; // Обновляем последний найденный блок
+                }
+                lastPosition = currentPosition;
             }
-            lastPosition = currentPosition;
-        }
-        if (mc.player == null || mc.world == null) return;
+
+
 
         int chunkX = mc.player.getBlockX() >> 4;
         int chunkZ = mc.player.getBlockZ() >> 4;
