@@ -16,6 +16,7 @@ import net.minecraft.block.FallingBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.item.MiningToolItem;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -213,28 +214,23 @@ public class VanillaNuker extends Module {
                 if (timer > 0) return;
             }
 
-            // Break blocks
-            int count = 0;
-            for (BlockPos block : blocks) {
-                if (count >= maxBlocksPerTick.get()) break;
+                // Break blocks
+                int count = 0;
+                for (int i = 0; i < blocks.size(); i++) {
+                    if (count >= maxBlocksPerTick.get()) break;
 
-                boolean canInstaMine = BlockUtils.canInstaBreak(block);
+                    BlockPos block = blocks.get(i);
 
-                if (rotate.get()) Rotations.rotate(Rotations.getYaw(block), Rotations.getPitch(block));
+                    if (mc.interactionManager.isBreakingBlock()) {
+                        mc.interactionManager.updateBlockBreakingProgress(block, getDirection(block));
+                    } else {
+                        mc.interactionManager.attackBlock(block, getDirection(block));
+                    }
 
-                if (block == null) continue;
+                    lastBlockPos.set(block);
 
-                if (mc.interactionManager.isBreakingBlock()) {
-                    mc.interactionManager.updateBlockBreakingProgress(block, getDirection(block));
-                } else {
-                    mc.interactionManager.attackBlock(block, getDirection(block));
+                    count++;
                 }
-
-                lastBlockPos.set(block);
-
-                count++;
-                if (!canInstaMine) break;
-            }
 
             firstBlock = false;
 

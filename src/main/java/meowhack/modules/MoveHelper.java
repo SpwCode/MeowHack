@@ -130,10 +130,12 @@ public class MoveHelper extends Module {
         if (positionCheckCounter >= baritoneCooldown.get()) { // 1200 тиков = примерно 1 минута
             positionCheckCounter = 0;
             BlockPos currentPosition = mc.player.getBlockPos();
-            if (lastPosition != null && currentPosition.equals(lastPosition)) {
-                if (nearestBlock == lastNearestBlock || nearestBlock == null) { mc.player.setYaw(mc.player.getYaw()+45); }
+            if (nearestBlock != null) {
+                if (nearestBlock.equals(lastNearestBlock)) {
+                    mc.player.setYaw(mc.player.getYaw() + 45);
+                }
                 ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goto " + nearestBlock.getX() + " ~ " + nearestBlock.getZ());
-                lastNearestBlock = nearestBlock;
+                lastNearestBlock = nearestBlock; // Обновляем последний найденный блок
             }
             lastPosition = currentPosition;
         }
