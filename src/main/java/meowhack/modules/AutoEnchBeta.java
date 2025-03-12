@@ -195,7 +195,7 @@ public class AutoEnchBeta extends Module {
                 }
 
                 if (!(mc.player.currentScreenHandler instanceof AnvilScreenHandler)) {
-                    error("Not in a Anvil screen, can't execute instruction: " + line);
+                    clickAtAnvil();
                     continue;
                 }
 

@@ -8,11 +8,10 @@ import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
-import meteordevelopment.meteorclient.settings.ColorSetting;
-import meteordevelopment.meteorclient.settings.Setting;
-import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import meteordevelopment.meteorclient.utils.world.TickRate;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.hit.BlockHitResult;
@@ -32,6 +31,24 @@ import java.util.List;
 
 public class AncientDebrisRenderer extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+
+    private final Setting<Double> lagg = sgGeneral.add(new DoubleSetting.Builder()
+        .name("stop-on-lags")
+        .description("Pause on server lagging. (Time since last tick)")
+        .defaultValue(0.3)
+        .min(0.1)
+        .max(1)
+        .sliderMin(0.1)
+        .sliderMax(1)
+        .build());
+
+    private final Setting<Integer> range = sgGeneral.add(new IntSetting.Builder()
+        .name("radius")
+        .defaultValue(5)
+        .min(0)
+        .sliderRange(1, 20)
+        .build()
+    );
 
     private final Setting<SettingColor> sideColor = sgGeneral.add(new ColorSetting.Builder()
         .name("side-color")
@@ -74,7 +91,7 @@ public class AncientDebrisRenderer extends Module {
     private void BreakBlockEvent(BreakBlockEvent event) {
         BlockPos breakingPos = event.blockPos;
 
-        if (mc.world.getBlockState(breakingPos).getBlock() != Blocks.ANCIENT_DEBRIS) return;
+       // if (mc.world.getBlockState(breakingPos).getBlock() != Blocks.ANCIENT_DEBRIS) return;
 
         if (debrisList.contains(breakingPos)) {
             debrisList.remove(breakingPos);
@@ -83,12 +100,13 @@ public class AncientDebrisRenderer extends Module {
     }
 
     @EventHandler
-    private void onTick(TickEvent.Pre e) {
+    private void onTick(TickEvent.Post e) {
         World world = mc.world;
         if (world == null || mc.player == null) return;
+        if (TickRate.INSTANCE.getTimeSinceLastTick() >= lagg.get()) return;
 
         BlockPos playerPos = mc.player.getBlockPos();
-        int radius = 4;
+        int radius = range.get();
 
         for (int x = -radius; x <= radius; x++) {
             for (int y = -1; y <= radius; y++) {
@@ -97,7 +115,7 @@ public class AncientDebrisRenderer extends Module {
                     // info("Проверка блока: " + pos + " | " + world.getBlockState(pos).getBlock());
                     if (world.getBlockState(pos).getBlock() == Blocks.ANCIENT_DEBRIS && !debrisList.contains(pos)) {
                       //  info("Найден древний обломок: " + pos);
-                        if (!isBlockInLineOfSight(pos)) {
+                        if (!isBlockInLineOfSight(pos) && isExposedToAir(pos)) {
                             debrisList.add(pos);
                             saveDebrisList();
                           //  info("Блок найден: " + pos.toString());
@@ -111,10 +129,24 @@ public class AncientDebrisRenderer extends Module {
 
     private boolean isBlockInLineOfSight(BlockPos placeAt) {
         Vec3d playerHead = new Vec3d(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ());
-        Vec3d placeAtVec = new Vec3d(placeAt.getX() + 0.5, placeAt.getY() + 0.5, placeAt.getZ() + 0.5);
-        BlockHitResult bhr = mc.world.raycast(new RaycastContext(playerHead, placeAtVec, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mc.player));
-        if ((bhr != null && (bhr.getBlockPos().equals(placeAt))) ) return false;
-        else return true;
+        double[] offsets = {0.01, 0.5, 0.99};
+
+        for (double offset : offsets) {
+            Vec3d targetVec = new Vec3d(placeAt.getX() + 0.5, placeAt.getY() + offset, placeAt.getZ() + 0.5);
+            BlockHitResult bhr = mc.world.raycast(new RaycastContext(playerHead, targetVec, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mc.player));
+
+            if (bhr != null && bhr.getBlockPos().equals(placeAt)) {
+                return false; // Если хотя бы один из лучей достигает блока, он виден
+            }
+        }
+        return true; // Если ни один из лучей не достиг блока, он вне зоны видимости
+    }
+
+    private boolean isExposedToAir(BlockPos pos) {
+        boolean exposed = mc.world.isAir(pos.up()) || mc.world.isAir(pos.down()) ||
+            mc.world.isAir(pos.north()) || mc.world.isAir(pos.south()) ||
+            mc.world.isAir(pos.east()) || mc.world.isAir(pos.west());
+        return exposed;
     }
 
     // Сохранение списка в файл
@@ -164,6 +196,16 @@ public class AncientDebrisRenderer extends Module {
 
         for (BlockPos pos : debrisList) {
             event.renderer.box(pos, sideColor.get(), meteordevelopment.meteorclient.utils.render.color.Color.WHITE, ShapeMode.Both, 0);
+            // renderLine(event, pos);
         }
+    }
+
+    public void renderLine(Render3DEvent event, BlockPos placeAt) {
+            Vec3d playerHead = new Vec3d(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ());
+            Vec3d placeAtVec = new Vec3d(placeAt.getX() + 0.5, placeAt.getY(), placeAt.getZ() + 0.5);
+            BlockHitResult bhr = mc.world.raycast(new RaycastContext(playerHead, placeAtVec, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mc.player));
+            info("placeAt block" + placeAt.toString() + "Block hit result" + bhr.getBlockPos().toString());
+            event.renderer.line(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ(), placeAt.getX() + 0.5, placeAt.getY(), placeAt.getZ() + 0.5,  meteordevelopment.meteorclient.utils.render.color.Color.WHITE);
+            event.renderer.line(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ(), placeAt.getX() + 0.5, placeAt.getY() + 1, placeAt.getZ() + 0.5,  meteordevelopment.meteorclient.utils.render.color.Color.WHITE);
     }
 }

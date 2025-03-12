@@ -220,6 +220,7 @@ public class VanillaNuker extends Module {
                     if (count >= maxBlocksPerTick.get()) break;
 
                     BlockPos block = blocks.get(i);
+                    if (mc.player != null && (!(mc.player.getMainHandStack().getItem() instanceof MiningToolItem))) break;
 
                     if (mc.interactionManager.isBreakingBlock()) {
                         mc.interactionManager.updateBlockBreakingProgress(block, getDirection(block));
