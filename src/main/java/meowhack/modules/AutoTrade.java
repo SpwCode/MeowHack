@@ -24,6 +24,13 @@ import net.minecraft.village.TradeOffer;
 public class AutoTrade extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
+    private final Setting<Boolean> vanillaInteraction = sgGeneral.add(new BoolSetting.Builder()
+        .name("vanilla interaction")
+        .description("Trade fair price")
+        .defaultValue(true)
+        .build()
+    );
+
     private final Setting<Boolean> dontDemand = sgGeneral.add(new BoolSetting.Builder()
         .name("don't-demand-bonus")
         .description("Trade fair price")
@@ -47,9 +54,15 @@ public class AutoTrade extends Module {
 
         Entity target = mc.targetedEntity;
 
+
         if ((target instanceof VillagerEntity) && !((VillagerEntity) target).isBaby()) {
-            mc.options.useKey.setPressed(false);
-            mc.options.useKey.setPressed(true);
+            if (vanillaInteraction.get()) {
+                mc.options.useKey.setPressed(false);
+                mc.options.useKey.setPressed(true);
+            }
+            else{
+                mc.interactionManager.interactEntity(mc.player, target, Hand.MAIN_HAND);
+            }
         }
 
         if (mc.player.currentScreenHandler instanceof MerchantScreenHandler) {

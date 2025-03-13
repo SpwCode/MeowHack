@@ -1,6 +1,7 @@
 package meowhack.modules;
 
 
+import com.ibm.icu.impl.ICUResourceBundleReader;
 import meowhack.AddonTemplate;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -199,17 +200,30 @@ public class AutoEnchBeta extends Module {
                     continue;
                 }
 
-                if (slotNumber == 0 || slotNumber == 1) {
+                if (slotNumber == 0) {
+                    if (findAndMoveItem(parts[1], parts[2], slotNumber)) return;
+                }
+
+                if (slotNumber == 1) {
+                    if (((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(0).getStack().isEmpty()) {
+                        lineNumber--;
+                        return;
+                    }
                     if (findAndMoveItem(parts[1], parts[2], slotNumber)) return;
                 }
 
                 if ((slotNumber == 2)) {
+                    if (((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(0).getStack().isEmpty()) {
+                        lineNumber--;
+                        return;
+                    }
                     takeResults();
                     return;
                 }
 
                 if ((slotNumber == 3)) {
                         if (((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(0).getStack().isEmpty()) {
+                            lineNumber--;
                             return;
                         }
                         mc.player.networkHandler.sendPacket(new RenameItemC2SPacket(parts[2].trim()));
@@ -219,6 +233,10 @@ public class AutoEnchBeta extends Module {
 
                 if (slotNumber == 9) {
                         if (mc.player.currentScreenHandler instanceof AnvilScreenHandler) {
+                            if (((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(0).getStack().isEmpty()) {
+                                lineNumber--;
+                                return;
+                            }
                             InvUtils.drop().slotId(((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(2).getIndex());
                             if (((AnvilScreenHandler) mc.player.currentScreenHandler).slots.get(2).getStack().isEmpty()) {
                                 mc.player.networkHandler.sendPacket(new RenameItemC2SPacket(""));
@@ -265,4 +283,5 @@ public class AutoEnchBeta extends Module {
             lineNumber++;
         }
     }
+
 }
