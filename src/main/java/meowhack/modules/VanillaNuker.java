@@ -6,17 +6,16 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Pool;
-import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FallingBlock;
+import net.minecraft.item.MiningToolItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.item.MiningToolItem;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -64,13 +63,6 @@ public class VanillaNuker extends Module {
         .name("sort-mode")
         .description("The blocks you want to mine first.")
         .defaultValue(SortMode.Closest)
-        .build()
-    );
-
-    private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
-        .name("rotate")
-        .description("Automatically rotates towards the space targeted for filling.")
-        .defaultValue(false)
         .build()
     );
 
@@ -176,16 +168,11 @@ public class VanillaNuker extends Module {
             if (ignoreFallBlock.get() && (mc.world.getBlockState(abovePos).getBlock() instanceof FallingBlock)) return;
             if (blocksBelow.get() && blockPos.getY() < blocksHeight.get()) return;
             if (!BlockUtils.canBreak(blockPos, blockState) || Utils.squaredDistance(pX, pY, pZ, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5) > rangeSq) return;
-
             if (mode.get() == Mode.Flatten && blockPos.getY() < Math.floor(mc.player.getY())) return;
-
             if (mode.get() == Mode.Smash && blockState.getHardness(mc.world, blockPos) != 0) return;
-
             if (whitelistEnabled.get() && !whitelist.get().contains(blockState.getBlock())) return;
             if (blacklistEnabled.get() && blacklist.get().contains(blockState.getBlock())) return;
-
-            // Если флаг включён и рядом есть лава, не добавляем блок
-            if (ignoreNearLava.get() && isLavaNearby(blockPos)) return;
+            if (ignoreNearLava.get() && isLavaNearby(blockPos)) return;  // Если флаг включён и рядом есть лава, не добавляем блок
 
             blocks.add(blockPosPool.get().set(blockPos));
         });
@@ -220,12 +207,17 @@ public class VanillaNuker extends Module {
                     if (count >= maxBlocksPerTick.get()) break;
 
                     BlockPos block = blocks.get(i);
-                    if (mc.player != null && (!(mc.player.getMainHandStack().getItem() instanceof MiningToolItem))) break;
+                    if (mc.player == null || (mc.interactionManager == null) || (!(mc.player.getMainHandStack().getItem() instanceof MiningToolItem))) break;
 
                     if (mc.interactionManager.isBreakingBlock()) {
                         mc.interactionManager.updateBlockBreakingProgress(block, getDirection(block));
                     } else {
-                        mc.interactionManager.attackBlock(block, getDirection(block));
+                        synchronized (blocks) {
+                            for (BlockPos blockis : blocks) {
+                                if (mc.world.getBlockState(block).isAir()) continue;
+                                mc.interactionManager.attackBlock(blockis, getDirection(block));
+                            }
+                        }
                     }
 
                     lastBlockPos.set(block);
@@ -262,7 +254,6 @@ public class VanillaNuker extends Module {
     }
 
     public enum Mode {
-        All,
         Flatten,
         Smash
     }
@@ -270,6 +261,5 @@ public class VanillaNuker extends Module {
     public enum SortMode {
         None,
         Closest,
-        Furthest
     }
 }

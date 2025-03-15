@@ -1,5 +1,6 @@
 package meowhack.modules;
 
+import fi.dy.masa.itemscroller.util.InventoryUtils;
 import meowhack.AddonTemplate;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
@@ -11,6 +12,7 @@ import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.Item;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.util.Hand;
@@ -36,6 +38,14 @@ public class AutoSteal extends Module {
         .build()
     );
 
+    private final Setting<Integer> maxMovedItems = sgGeneral.add(new IntSetting.Builder()
+        .name("number-of-moved-items ")
+        .description("Delay between interactions.")
+        .defaultValue(6)
+        .range(1, 30)
+        .sliderMax(30)
+        .build()
+    );
 
     private final Setting<Integer> delayBetweenClicks = sgGeneral.add(new IntSetting.Builder()
         .name("delay-between-clicks")
@@ -90,7 +100,7 @@ public class AutoSteal extends Module {
                                 mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
                             }
                             if (mc.player.currentScreenHandler instanceof ShulkerBoxScreenHandler) {
-                                processItems(false); // Dump
+                                dumpItems(); // Dump
 
                             }
                         }
@@ -99,7 +109,7 @@ public class AutoSteal extends Module {
                                 mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
                             }
                             if (mc.player.currentScreenHandler instanceof ShulkerBoxScreenHandler) {
-                                processItems(true); // Steal
+                                stealItems(); // Steal
                             }
                         }
                     }
@@ -114,17 +124,16 @@ public class AutoSteal extends Module {
         return -1;
     }
 
-    private void processItems(boolean isSteal) {
+    private void stealItems() {
         if (clickDelay > 0) {
             clickDelay--;
-            return; // Ждём завершения задержки
+            return;
         }
 
-        // Определяем параметры в зависимости от режима (красть или сбрасывать)
-        List<Item> targetItems = isSteal ? itemsForSteal.get() : itemsForDump.get();
-        int fromSlot = isSteal ? 0 : 27;
-        int toSlot = isSteal ? 26 : 62;
-        int emptySlot = getEmptySlot(isSteal ? 27 : 0, isSteal ? 54 : 27); // Ищем пустой слот заранее
+        List<Item> targetItems = itemsForSteal.get();
+        int fromSlot = 0;
+        int toSlot = 26;
+        int emptySlot = getEmptySlot(27, 54); // Проверяем пустой слот в инвентаре
 
         if (emptySlot == -1) return; // Нет свободного места
 
@@ -135,9 +144,34 @@ public class AutoSteal extends Module {
 
             if (targetItems.contains(item)) {
                 InvUtils.move().fromId(i).toId(emptySlot);
-               //info((isSteal ? "Steal" : "Dump") + " Двигаем слот " + i + " в слот " + emptySlot);
                 clickDelay = delayBetweenClicks.get();
-                return; // Двигаем только один предмет за раз
+                return; // Перемещаем один предмет за раз
+            }
+        }
+    }
+
+    private void dumpItems() {
+        if (clickDelay > 0) {
+            clickDelay--;
+            return;
+        }
+
+        List<Item> targetItems = itemsForDump.get();
+        int fromSlot = 27;
+        int toSlot = 62;
+
+        for (int i = fromSlot; i <= toSlot; i++) {
+            if (mc.player.currentScreenHandler.getSlot(i).getStack().isEmpty()) continue;
+
+            Item item = mc.player.currentScreenHandler.getSlot(i).getStack().getItem().asItem();
+
+            if (targetItems.contains(item)) {
+                if (!(mc.currentScreen instanceof HandledScreen<?>)) return;
+                HandledScreen<?> screen = (HandledScreen<?>) mc.currentScreen; // Преобразование
+
+                InventoryUtils.shiftClickSlot(screen,i);
+                clickDelay = delayBetweenClicks.get();
+                return; // Перемещаем один предмет за раз
             }
         }
     }

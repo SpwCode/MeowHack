@@ -18,13 +18,6 @@ public class AutoBoost extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
-    private final Setting<Boolean> noFall = sgGeneral.add(new BoolSetting.Builder()
-    .name("no-fall")
-    .description("Boost speed.")
-    .defaultValue(false)
-    .build()
-    );
-
     private final Setting<Double> settingBoost = sgGeneral.add(new DoubleSetting.Builder()
         .name("boost")
         .description("Boost speed.")
@@ -65,12 +58,6 @@ public class AutoBoost extends Module {
         mc.player.setVelocity(new Vec3d(0, mc.player.getVelocity().y, 0));
     }
   }
-
-  @EventHandler
-  public void event_ZPlayerMove(PlayerMoveEvent e) {
-    if (noFall.get() && e.movement.y > 0) ((IVec3d)e.movement).meteor$setY(0);
-    // if (mc.player.isGliding()) ((IVec3d)e.movement).setY(0);
-}
 
   @EventHandler
   private void TickEvent(TickEvent.Pre e) {
