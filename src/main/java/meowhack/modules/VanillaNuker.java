@@ -179,6 +179,7 @@ public class VanillaNuker extends Module {
 
         // Break block if found
         BlockIterator.after(() -> {
+            blocks.removeIf(block -> mc.world.getBlockState(block).isAir());
             // Sort blocks
             if (sortMode.get() != SortMode.None) {
                 blocks.sort(Comparator.comparingDouble(value -> Utils.squaredDistance(pX, pY, pZ, value.getX() + 0.5, value.getY() + 0.5, value.getZ() + 0.5)
@@ -214,8 +215,9 @@ public class VanillaNuker extends Module {
                     } else {
                         synchronized (blocks) {
                             for (BlockPos blockis : blocks) {
-                                if (mc.world.getBlockState(block).isAir()) continue;
-                                mc.interactionManager.attackBlock(blockis, getDirection(block));
+                                if (!mc.world.getBlockState(block).isAir()) {
+                                    mc.interactionManager.attackBlock(block, getDirection(block));
+                                }
                             }
                         }
                     }

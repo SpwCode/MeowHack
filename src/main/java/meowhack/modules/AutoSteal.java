@@ -131,24 +131,38 @@ public class AutoSteal extends Module {
         }
 
         List<Item> targetItems = itemsForSteal.get();
+        int currentItemStacks = 0;
+
+        // Подсчитываем количество уже имеющихся стаков в инвентаре
+        for (int i = 27; i < 63; i++) {
+            if (!mc.player.currentScreenHandler.getSlot(i).getStack().isEmpty()) {
+                Item item = mc.player.currentScreenHandler.getSlot(i).getStack().getItem();
+                if (targetItems.contains(item)) {
+                    currentItemStacks += mc.player.currentScreenHandler.getSlot(i).getStack().getCount() / item.getMaxCount();
+                }
+            }
+        }
+
         int fromSlot = 0;
         int toSlot = 26;
-        int emptySlot = getEmptySlot(27, 54); // Проверяем пустой слот в инвентаре
-
-        if (emptySlot == -1) return; // Нет свободного места
 
         for (int i = fromSlot; i <= toSlot; i++) {
             if (mc.player.currentScreenHandler.getSlot(i).getStack().isEmpty()) continue;
 
             Item item = mc.player.currentScreenHandler.getSlot(i).getStack().getItem();
 
-            if (targetItems.contains(item)) {
+            if (targetItems.contains(item) && currentItemStacks < maxMovedItems.get()) {
+                int emptySlot = getEmptySlot(27, 54); // Проверяем пустой слот в инвентаре
+                if (emptySlot == -1) return; // Нет свободного места
+
                 InvUtils.move().fromId(i).toId(emptySlot);
+                currentItemStacks++;
                 clickDelay = delayBetweenClicks.get();
                 return; // Перемещаем один предмет за раз
             }
         }
     }
+
 
     private void dumpItems() {
         if (clickDelay > 0) {
