@@ -32,6 +32,7 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new AutoPilot());
         Modules.get().add(new AutoSteal());
         Modules.get().add(new AutoTrade());
+        Modules.get().add(new ChatFilterBypass());
         Modules.get().add(new MoveHelper());
         Modules.get().add(new RocketRight());
         Modules.get().add(new VanillaFly());
