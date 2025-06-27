@@ -1,6 +1,6 @@
 package meowhack;
 
-import meowhack.commands.CalcCommand;
+import meowhack.commands.Calculator;
 import meowhack.commands.Destination;
 import meowhack.hud.HudExperience;
 import com.mojang.logging.LogUtils;
@@ -25,23 +25,31 @@ public class AddonTemplate extends MeteorAddon {
 
         // Modules
         Modules.get().add(new AreaScan());
-        Modules.get().add(new AutoBoost());
+        Modules.get().add(new AreaScanNether());
         Modules.get().add(new AutoCraftHelper());
         Modules.get().add(new AutoCraftReject());
+        Modules.get().add(new AutoEatExtra());
         Modules.get().add(new AutoEnchBeta());
         Modules.get().add(new AutoPilot());
         Modules.get().add(new AutoSteal());
         Modules.get().add(new AutoTrade());
-        Modules.get().add(new ChatFilterBypass());
+        Modules.get().add(new BaritoneHelper());
+        Modules.get().add(new BannerPlacer());
+        Modules.get().add(new Disconnect());
+        Modules.get().add(new DmSpam());
+        Modules.get().add(new ExplosionProtector());
         Modules.get().add(new MoveHelper());
+        Modules.get().add(new NoFrames());
         Modules.get().add(new RocketRight());
+        Modules.get().add(new QuickStash());
         Modules.get().add(new VanillaFly());
+        Modules.get().add(new VanillaFlyHighway());
         Modules.get().add(new VanillaNuker());
-        Modules.get().add(new AncientDebrisRenderer());
+        Modules.get().add(new Xynta());
 
         // Commands
         Commands.add(new Destination());
-        Commands.add(new CalcCommand());
+        Commands.add(new Calculator());
 
         // HUD
         Hud.get().register(HudExperience.INFO);

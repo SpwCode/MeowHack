@@ -31,6 +31,14 @@ public class AutoSteal extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
+    private final Setting<Double> range = sgGeneral.add(new DoubleSetting.Builder()
+        .name("range")
+        .description("The take range.")
+        .defaultValue(4)
+        .min(0)
+        .build()
+    );
+
     private final Setting<Boolean> turnRotation = sgGeneral.add(new BoolSetting.Builder()
         .name("turn-rotation-module")
         .description("Turn on rotation module on activate")
@@ -89,9 +97,9 @@ public class AutoSteal extends Module {
             int pz = mc.player.getBlockPos().getZ();
 
 
-            for (int x = px - 3; x <= px + 3; x++) {
-                for (int z = pz - 3; z <= pz + 3; z++) {
-                    for (int y = py - 1; y <= py + 2; y++) {
+            for (int x = px - range.get().intValue(); x <= px + range.get().intValue(); x++) {
+                for (int z = pz - range.get().intValue(); z <= pz + range.get().intValue(); z++) {
+                    for (int y = py - range.get().intValue(); y <= py + range.get().intValue(); y++) {
                         BlockPos pos = new BlockPos(x, y, z);
                         BlockState state = mc.world.getBlockState(pos);
                         BlockState triggerBlockState = mc.world.getBlockState(new BlockPos(x, y, z + 1));

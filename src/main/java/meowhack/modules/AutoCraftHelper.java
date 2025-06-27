@@ -102,7 +102,7 @@ public class AutoCraftHelper extends Module {
         findBlockToClick(shulkersToPitIn.get().get(0));
     }
 
-    private void findBlockToClick(Block blockToClick) {
+    public void findBlockToClick(Block blockToClick) {
         int px = mc.player.getBlockPos().getX();
         int py = mc.player.getBlockPos().getY();
         int pz = mc.player.getBlockPos().getZ();

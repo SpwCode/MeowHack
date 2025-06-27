@@ -1,6 +1,7 @@
 package meowhack.modules;
 
 import meowhack.AddonTemplate;
+import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BlockPosSetting;
@@ -9,9 +10,11 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import java.lang.reflect.Field;
 
 public class AutoPilot extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

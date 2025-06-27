@@ -3,7 +3,8 @@
   "package": "meowhack.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "ExampleMixin"
+    "ExampleMixin",
+    "SecondMixin"
   ],
   "injectors": {
     "defaultRequire": 1

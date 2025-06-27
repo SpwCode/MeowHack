@@ -1,21 +1,24 @@
 package meowhack.mixin;
 
-import meowhack.AddonTemplate;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.RunArgs;
+import meowhack.modules.VanillaFlyHighway;
+import meteordevelopment.meteorclient.mixininterface.ICamera;
+import meteordevelopment.meteorclient.systems.modules.Modules;
+import net.minecraft.client.render.Camera;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+    @Mixin(Camera.class)
+    abstract class ExampleMixin implements ICamera {
+        @ModifyArgs(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;setRotation(FF)V"))
+        private void onUpdateSetRotationArgs(Args args) {
 
-@Mixin(MinecraftClient.class)
-public abstract class ExampleMixin {
-    /**
-     * Example Mixin injection targeting the {@code <init>} method (the constructor) at {@code TAIL} (end of method).
-     */
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void onGameLoaded(RunArgs args, CallbackInfo ci) {
-        AddonTemplate.LOG.info("Hello from ExampleMixin!");
+            VanillaFlyHighway vanillaFly = Modules.get().get(VanillaFlyHighway.class);
+
+            if (vanillaFly.isActive() && vanillaFly.freeLook.get()) {
+                //args.set(0, vanillaFly.cameraYaw);
+                args.set(1, vanillaFly.cameraPitch);
+            }
+        }
     }
-}
