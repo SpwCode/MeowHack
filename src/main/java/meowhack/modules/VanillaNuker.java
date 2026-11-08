@@ -12,7 +12,6 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FallingBlock;
-import net.minecraft.item.MiningToolItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -208,7 +207,7 @@ public class VanillaNuker extends Module {
                     if (count >= maxBlocksPerTick.get()) break;
 
                     BlockPos block = blocks.get(i);
-                    if (mc.player == null || (mc.interactionManager == null) || (!(mc.player.getMainHandStack().getItem() instanceof MiningToolItem))) break;
+                    if (mc.player == null || mc.interactionManager == null || mc.player.getMainHandStack().isEmpty()) break;
 
                     if (mc.interactionManager.isBreakingBlock()) {
                         mc.interactionManager.updateBlockBreakingProgress(block, getDirection(block));

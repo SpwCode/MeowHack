@@ -13,8 +13,6 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Items;
-import net.minecraft.item.MiningToolItem;
-import net.minecraft.item.SwordItem;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -54,10 +52,9 @@ public class RocketRight extends Module {
                 this.mc.currentScreen == null &&
                 mc.player.isGliding() &&
                 !isLookingAtContainer() &&
-                (this.mc.player.getMainHandStack().getItem() instanceof SwordItem ||
-                    this.mc.player.getMainHandStack().getItem() instanceof MiningToolItem ||
-                    this.mc.player.getMainHandStack().isEmpty() ||
-                    (useBlocks.get() && this.mc.player.getMainHandStack().getItem() instanceof BlockItem))) {
+                (this.mc.player.getMainHandStack().isEmpty() ||
+                    (useBlocks.get() && this.mc.player.getMainHandStack().getItem() instanceof BlockItem) ||
+                    !(this.mc.player.getMainHandStack().getItem() instanceof BlockItem))) {
 
                 if (useFireworkFromInventory(8)) { // 8 - это номер слота хотбара (0-8)
                     ticksLeft = FireworkDelay.get() * 20;

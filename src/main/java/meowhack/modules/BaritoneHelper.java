@@ -94,7 +94,7 @@ public class BaritoneHelper extends Module {
         positionCheckCounter++;
         if (positionCheckCounter >= errorCommandDelay.get()) { // 1200 тиков = примерно 1 минута
             positionCheckCounter = 0;
-            Vec3d currentPosition = mc.player.getPos();
+            Vec3d currentPosition = new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ());
             if (lastPosition != null && currentPosition.equals(lastPosition) && !errorCommand1.get().equals("")) {
                 ChatUtils.sendPlayerMsg(errorCommand1.get());
             }

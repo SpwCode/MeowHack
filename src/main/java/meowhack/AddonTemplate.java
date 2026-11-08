@@ -1,7 +1,6 @@
 package meowhack;
 
 import meowhack.commands.Calculator;
-import meowhack.commands.Destination;
 import meowhack.hud.HudExperience;
 import com.mojang.logging.LogUtils;
 import meowhack.modules.*;
@@ -35,20 +34,21 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new AutoTrade());
         Modules.get().add(new BaritoneHelper());
         Modules.get().add(new BannerPlacer());
+        Modules.get().add(new ChatResponderModule());
         Modules.get().add(new Disconnect());
         Modules.get().add(new DmSpam());
         Modules.get().add(new ExplosionProtector());
+        Modules.get().add(new ItemESP());
         Modules.get().add(new MoveHelper());
         Modules.get().add(new NoFrames());
         Modules.get().add(new RocketRight());
+        Modules.get().add(new ShulkerManager());
         Modules.get().add(new QuickStash());
-        Modules.get().add(new VanillaFly());
         Modules.get().add(new VanillaFlyHighway());
         Modules.get().add(new VanillaNuker());
         Modules.get().add(new Xynta());
 
         // Commands
-        Commands.add(new Destination());
         Commands.add(new Calculator());
 
         // HUD

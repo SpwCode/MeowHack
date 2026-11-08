@@ -46,6 +46,13 @@ public class MoveHelper extends Module {
         .build()
     );
 
+    private final Setting<Boolean> baritoneCommands = sgGeneral.add(new BoolSetting.Builder()
+        .name("baritone-commands")
+        .description("Activate baritone Commands")
+        .defaultValue(true)
+        .build()
+    );
+
     private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
         .name("delay")
         .description("The amount of delay between interactions.")
@@ -64,12 +71,18 @@ public class MoveHelper extends Module {
         .build()
     );
 
-    private final Setting<Integer> searchRadiusY = sgGeneral.add(new IntSetting.Builder()
-        .name("radius-Y")
-        .description("How far blocks to search.")
-        .defaultValue(0)
+    private final Setting<Boolean> restrictHeight = sgGeneral.add(new BoolSetting.Builder()
+        .name("ограничивать-высоту")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<Integer> minimumHeight = sgGeneral.add(new IntSetting.Builder()
+        .name("минимальная-высота")
+        .defaultValue(14)
         .min(0)
-        .sliderRange(0, 200)
+        .sliderRange(-64, 319)
+        .visible(restrictHeight::get)
         .build()
     );
 
@@ -136,12 +149,12 @@ public class MoveHelper extends Module {
                         mc.player.setYaw(mc.player.getYaw() + 45);
                     }
                 }
-                    ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goto " + nearestBlock.getX() + " ~ " + nearestBlock.getZ());
-                    lastNearestBlock = nearestBlock;
-                    lastNearestBlock = nearestBlock; // Обновляем последний найденный блок
-                }
-                lastPosition = currentPosition;
+                if (baritoneCommands.get())   ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "goto " + nearestBlock.getX() + " ~ " + nearestBlock.getZ());
+                lastNearestBlock = nearestBlock;
+                lastNearestBlock = nearestBlock; // Обновляем последний найденный блок
             }
+            lastPosition = currentPosition;
+        }
 
 
 
@@ -163,7 +176,9 @@ public class MoveHelper extends Module {
 
             List<BlockPos> foundBlocks = new ArrayList<>();
 
-            BlockIterator.register(16, searchRadiusY.get(), (pos, blockState) -> {
+            BlockIterator.register(16, 1, (pos, blockState) -> {
+                if (restrictHeight.get() && pos.getY() < minimumHeight.get()) return; // Ограничение высоты
+
                 BlockPos abovePos2 = pos.up();
                 if (pos.getX() >= startX && pos.getX() <= endX && pos.getZ() >= startZ && pos.getZ() <= endZ) {
                     if (whitelistenabled.get() && whitelist.get().contains(blockState.getBlock()) && !isLavaNearby(pos) && !(mc.world.getBlockState(abovePos2).getBlock() instanceof FallingBlock)) {

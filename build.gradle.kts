@@ -1,10 +1,10 @@
 plugins {
-    id("fabric-loom") version "1.9-SNAPSHOT"
+    alias(libs.plugins.fabric.loom)
 }
 
 base {
     archivesName = properties["archives_base_name"] as String
-    version = properties["mod_version"] as String
+    version = libs.versions.mod.version.get()
     group = properties["maven_group"] as String
 }
 
@@ -17,23 +17,31 @@ repositories {
         name = "meteor-maven-snapshots"
         url = uri("https://maven.meteordev.org/snapshots")
     }
+
     maven {
         name = "jitpack"
         url = uri("https://jitpack.io")
     }
+
+    maven {
+        url = uri("https://maven.fallenbreath.me/releases") }
 }
 
 dependencies {
     // Fabric
-    minecraft("com.mojang:minecraft:${properties["minecraft_version"] as String}")
-    mappings("net.fabricmc:yarn:${properties["yarn_mappings"] as String}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${properties["loader_version"] as String}")
+    minecraft(libs.minecraft)
+    mappings(variantOf(libs.yarn) { classifier("v2") })
+    modImplementation(libs.fabric.loader)
 
     // Meteor
-    modImplementation("meteordevelopment:meteor-client:${properties["minecraft_version"] as String}-SNAPSHOT")
+    modImplementation(libs.meteor.client)
 
-   // ItemScroller
-    modImplementation ("com.github.sakura-ryoko:itemscroller:1.21.4-0.26.0")
+    // ItemScroller
+    modImplementation(libs.itemscroller)
+
+    // Litematica
+    implementation("com.github.sakura-ryoko:litematica:1.21.11-0.26.0")
+    implementation("com.github.sakura-ryoko:malilib:1.21.11-0.27.6")
 
 }
 
@@ -41,8 +49,11 @@ tasks {
     processResources {
         val propertyMap = mapOf(
             "version" to project.version,
-            "mc_version" to project.property("minecraft_version"),
+            "mc_version" to libs.versions.minecraft.get()
         )
+
+        inputs.properties(propertyMap)
+        filteringCharset = "UTF-8"
 
         filesMatching("fabric.mod.json") {
             expand(propertyMap)
@@ -50,9 +61,9 @@ tasks {
     }
 
     jar {
-        val licenseSuffix = project.base.archivesName.get()
+        inputs.property("archivesName", project.base.archivesName.get())
         from("LICENSE") {
-            rename { "${it}_${licenseSuffix}" }
+            rename { "${it}_${inputs.properties["archivesName"]}" }
         }
     }
 
@@ -64,5 +75,7 @@ tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.release = 21
+        options.compilerArgs.add("-Xlint:deprecation")
+        options.compilerArgs.add("-Xlint:unchecked")
     }
 }

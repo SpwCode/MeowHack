@@ -120,9 +120,8 @@ public class AutoCraftHelper extends Module {
                 }
             }
         }
-        if (!blockFound && AutoShutdown.get()) {
+        if (!blockFound) {
             error("Блок " + blockToClick.getName().getString() + " не найден в радиусе 4 блоков от игрока.");
-            this.toggle();
         }
     }
 

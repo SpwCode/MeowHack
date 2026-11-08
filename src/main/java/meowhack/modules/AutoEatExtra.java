@@ -106,7 +106,7 @@ public class AutoEatExtra extends Module {
     private int selectedSlot;
 
     private final List<Module> currentModulesIsPaused = new ArrayList<>();
-    private boolean currentBaritoneIsPaused;
+    private boolean wasBaritone;
 
     @Override
     public void onActivate() {
@@ -131,13 +131,6 @@ public class AutoEatExtra extends Module {
         }
     }
 
-
-//    @Override
-//    public String getInfoString() {
-//        return String.valueOf(wait);
-//    }
-
-
     @EventHandler(priority = EventPriority.LOW)
     private void a(TickEvent.Pre e) {
 
@@ -147,7 +140,7 @@ public class AutoEatExtra extends Module {
                 resumeAuras();
                 eating = false;
                 wait = 0;
-                InvUtils.swap(selectedSlot, false);
+               // InvUtils.swap(selectedSlot, false);
             }
             return;
         }
@@ -158,7 +151,7 @@ public class AutoEatExtra extends Module {
         if ((mc.player.getHungerManager().getFoodLevel() <= hungerThreshold.get()) || (mc.player.getHealth() <= healthThreshold.get())){
             int slot = findSlot();
             if (slot != -1) {
-                selectedSlot = mc.player.getInventory().selectedSlot;
+                // selectedSlot = mc.player.getInventory().selectedSlot;
                 InvUtils.swap(slot, false);
                 eating = true;
                 wait = 36;
@@ -180,12 +173,11 @@ public class AutoEatExtra extends Module {
             }
         }
 
-        // Pause baritone
-
-            if (pauseBaritone.get() && !currentBaritoneIsPaused) {
-        currentBaritoneIsPaused = true;
-        ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "pause");
-    }
+        if (pauseBaritone.get() && PathManagers.get().isPathing() && !wasBaritone) {
+            wasBaritone = true;
+            PathManagers.get().pause();
+            ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "pause");
+        }
 }
 
 
@@ -199,10 +191,11 @@ public class AutoEatExtra extends Module {
         currentModulesIsPaused.clear();
 
         // Resume baritone
-            if (pauseBaritone.get() && currentBaritoneIsPaused) {
-        currentBaritoneIsPaused = false;
-        ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "resume");
-    }
+        if (pauseBaritone.get() && wasBaritone) {
+            wasBaritone = false;
+            PathManagers.get().resume();
+            ChatUtils.sendPlayerMsg(BaritoneUtils.getPrefix() + "resume");
+        }
 }
 
 

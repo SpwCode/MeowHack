@@ -49,9 +49,17 @@ public class VanillaFlyHighway extends Module {
 
     public final Setting<Boolean> freeLook  = sgGeneral.add(new BoolSetting.Builder()
         .name("free-look")
-        .description("Тест фича")
+        .description("Позволяет смотреть вокруг")
         .visible(debug::get)
         .defaultValue(true)
+        .build()
+    );
+
+    public final Setting<Boolean> turnOff  = sgGeneral.add(new BoolSetting.Builder()
+        .name("выключить модуль полночтью")
+        .description("Тест фича")
+        .visible(() -> debug.get() && freeLook.get())
+        .defaultValue(false)
         .build()
     );
 
@@ -107,9 +115,11 @@ public class VanillaFlyHighway extends Module {
     @EventHandler
     private void onTick(TickEvent.Post e) {
         if (mc.player == null || mc.world == null) return;
-        pressFire();
-        lookAtHeight(mainHeight.get());
-        mc.options.forwardKey.setPressed(true);
+        if (!turnOff.get()) {
+            pressFire();
+            lookAtHeight(mainHeight.get());
+            mc.options.forwardKey.setPressed(true);
+        }
     }
 
     public void lookAtHeight(double targetY) {
