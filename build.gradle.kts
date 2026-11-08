@@ -40,8 +40,8 @@ dependencies {
     modImplementation(libs.itemscroller)
 
     // Litematica
-    implementation("com.github.sakura-ryoko:litematica:1.21.11-0.26.0")
-    implementation("com.github.sakura-ryoko:malilib:1.21.11-0.27.6")
+    modImplementation("com.github.sakura-ryoko:litematica:1.21.11-0.26.0")
+    modImplementation("com.github.sakura-ryoko:malilib:1.21.11-0.27.6")
 
 }
 

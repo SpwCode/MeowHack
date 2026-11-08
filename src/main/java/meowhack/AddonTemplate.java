@@ -38,6 +38,7 @@ public class AddonTemplate extends MeteorAddon {
         Modules.get().add(new Disconnect());
         Modules.get().add(new DmSpam());
         Modules.get().add(new ExplosionProtector());
+        Modules.get().add(new FlyHelper2());
         Modules.get().add(new ItemESP());
         Modules.get().add(new MoveHelper());
         Modules.get().add(new NoFrames());
